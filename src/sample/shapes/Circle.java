@@ -6,10 +6,15 @@ public class Circle extends AbstractShape {
 
     public Circle(double[] startPoint, double[] endPoint) {
         super();
-        this.setStartPoints(startPoint);
-        this.setEndPoints(endPoint);
+        setStartingPoints(startPoint);
+        setEndPoints(endPoint);
     }
 
+
+    @Override
+    public String getType() {
+        return "Okrąg";
+    }
 
     @Override
     public void draw() {

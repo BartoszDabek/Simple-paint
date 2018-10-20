@@ -7,8 +7,23 @@ public class Rectangle extends AbstractShape {
 
     public Rectangle(double[] startPoint, double[] endPoints) {
         super();
-        this.setStartPoints(startPoint);
-        this.setEndPoints(endPoints);
+        setStartingPoints(startPoint);
+        setEndPoints(endPoints);
+    }
+
+    @Override
+    public String getType() {
+        return "Prostokąt";
+    }
+
+    @Override
+    public void draw() {
+        GraphicsContext gc = getLayer().getGraphicsContext2D();
+        gc.setFill(getFillColor());
+        fixDimensions();
+        gc.fillRect(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[1] - getStartingPoints()[1]));
+        gc.strokeRect(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[1] - getStartingPoints()[1]));
+        Controller.getInstance().getCanvasHolder().getChildren().add(getLayer());
     }
 
     private void fixDimensions() {
@@ -22,15 +37,5 @@ public class Rectangle extends AbstractShape {
             getEndPoints()[1] = getStartingPoints()[1];
             getStartingPoints()[1] = temp;
         }
-    }
-
-    @Override
-    public void draw() {
-        GraphicsContext gc = getLayer().getGraphicsContext2D();
-        gc.setFill(getFillColor());
-        fixDimensions();
-        gc.fillRect(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[1] - getStartingPoints()[1]));
-        gc.strokeRect(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[1] - getStartingPoints()[1]));
-        Controller.getInstance().getCanvasHolder().getChildren().add(getLayer());
     }
 }

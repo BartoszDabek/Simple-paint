@@ -7,4 +7,6 @@ public interface Shape {
     double[] getStartingPoints();
     double[] getEndPoints();
     void draw();
+    String getType();
+    void remove();
 }

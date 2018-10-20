@@ -11,6 +11,7 @@ import sample.shapes.Line;
 import sample.shapes.Rectangle;
 import sample.shapes.Shape;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class Controller {
@@ -35,11 +36,12 @@ public class Controller {
     private Label coordinates;
 
     @FXML
-    private Button drawButton;
-
-    @FXML
     private TextField labelStartX, labelStartY, labelEndX, labelEndY;
 
+    @FXML
+    private ToggleButton move;
+
+    private Optional<Shape> tempShape;
     private static Controller instance;
 
     @FXML
@@ -60,15 +62,37 @@ public class Controller {
         canvasHolder.setOnMouseMoved(event -> coordinates.setText("X: " + event.getX() + "Y: " + event.getY()));
 
         canvasHolder.setOnMousePressed(event -> {
-//            Shape s = ShapeSelector.getSelectedShape(event.getX(), event.getY());
-
             startX = event.getX();
             startY = event.getY();
+
+            if (move.isSelected()) {
+                tempShape = Optional.ofNullable(ShapeSelector.getSelectedShape(event.getX(), event.getY()));
+            }
+
         });
 
         canvasHolder.setOnMouseReleased(event -> {
             endX = event.getX();
             endY = event.getY();
+
+            if (move.isSelected()) {
+                tempShape.ifPresent(shape -> {
+                    double moveX = endX -startX;
+                    double moveY = endY - startY;
+
+                    startX = shape.getStartingPoints()[0] + (moveX);
+                    startY = shape.getStartingPoints()[1] + (moveY);
+                    endX = shape.getEndPoints()[0] + moveX;
+                    endY = shape.getEndPoints()[1] + moveY;
+
+                    Main.getInstance().getShapes().remove(shape);
+                    shape.remove();
+
+                    drawShape(shape.getType());
+                });
+                return;
+            }
+
 
             drawSelectedShape();
         });
@@ -96,23 +120,26 @@ public class Controller {
         ToggleButton selectedToggle = (ToggleButton) toggleGroup.getSelectedToggle();
         if (selectedToggle != null) {
             String text = selectedToggle.getText();
+            drawShape(text);
+        }
+    }
 
-            switch (text) {
-                case "Linia":
-                    new Line(new double[]{startX, startY}, new double[]{endX, endY})
-                            .draw();
-                    break;
+    private void drawShape(String text) {
+        switch (text) {
+            case "Linia":
+                new Line(new double[]{startX, startY}, new double[]{endX, endY})
+                        .draw();
+                break;
 
-                case "Prostokąt":
-                    new Rectangle(new double[]{startX, startY}, new double[]{endX, endY})
-                            .draw();
-                    break;
+            case "Prostokąt":
+                new Rectangle(new double[]{startX, startY}, new double[]{endX, endY})
+                        .draw();
+                break;
 
-                case "Okrąg":
-                    new Circle(new double[]{startX, startY}, new double[]{endX, endY})
-                            .draw();
-                    break;
-            }
+            case "Okrąg":
+                new Circle(new double[]{startX, startY}, new double[]{endX, endY})
+                        .draw();
+                break;
         }
     }
 
@@ -139,17 +166,17 @@ public class Controller {
 }
 
 class ShapeSelector {
-    public static Shape getSelectedShape(double x, double y) {
+    static Shape getSelectedShape(double x, double y) {
         for (Shape s : Main.getInstance().getShapes()) {
             if (isInRange(x, s.getStartingPoints()[0], y, s.getStartingPoints()[1]))
                 return s;
-            if (isInRange(x, s.getEndPoints()[0], y, s.getEndPoints()[0]))
+            if (isInRange(x, s.getEndPoints()[0], y, s.getEndPoints()[1]))
                 return s;
         }
         return null;
     }
 
     private static boolean isInRange(double x1, double x2, double y1, double y2) {
-        return Math.abs(x1 - x2) < 5 && Math.abs(y1 - y2) < 5;
+        return Math.abs(x1 - x2) < 15 && Math.abs(y1 - y2) < 15;
     }
 }

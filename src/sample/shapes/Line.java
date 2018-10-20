@@ -7,8 +7,13 @@ public class Line extends AbstractShape{
 
     public Line(double[] startPoint, double[] endPoint) {
         super();
-        setStartPoints(startPoint);
+        setStartingPoints(startPoint);
         setEndPoints(endPoint);
+    }
+
+    @Override
+    public String getType() {
+        return "Linia";
     }
 
     @Override
