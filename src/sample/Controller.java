@@ -24,6 +24,9 @@ public class Controller {
     private double endY;
     private double mainWidth = 1195;
     private double mainHeight = 629;
+    private Optional<Shape> tempShape;
+    private static Controller instance;
+    public static String marked;
 
     @FXML
     private Canvas mainCanvas;
@@ -41,10 +44,7 @@ public class Controller {
     private TextField labelStartX, labelStartY, labelEndX, labelEndY;
 
     @FXML
-    private ToggleButton move, resize;
-
-    private Optional<Shape> tempShape;
-    private static Controller instance;
+    private ToggleButton move, resize, resizeByMove;
 
     @FXML
     public void initialize() {
@@ -61,13 +61,15 @@ public class Controller {
         mainCanvas.setHeight(mainHeight);
         mainCanvas.setWidth(mainWidth);
 
-        canvasHolder.setOnMouseMoved(event -> coordinates.setText("X: " + event.getX() + "Y: " + event.getY()));
+        canvasHolder.setOnMouseMoved(event -> {
+            coordinates.setText("X: " + event.getX() + "  Y: " + event.getY());
+        });
 
         canvasHolder.setOnMousePressed(event -> {
             startX = event.getX();
             startY = event.getY();
 
-            if (move.isSelected() || resize.isSelected()) {
+            if (move.isSelected() || resize.isSelected() || resizeByMove.isSelected()) {
                 tempShape = Optional.ofNullable(ShapeSelector.getSelectedShape(event.getX(), event.getY()));
 
                 if (resize.isSelected()) {
@@ -85,11 +87,11 @@ public class Controller {
         canvasHolder.setOnMouseReleased(event -> {
             endX = event.getX();
             endY = event.getY();
+            double moveX = endX -startX;
+            double moveY = endY - startY;
 
             if (move.isSelected()) {
                 tempShape.ifPresent(shape -> {
-                    double moveX = endX -startX;
-                    double moveY = endY - startY;
 
                     startX = shape.getStartingPoints()[0] + (moveX);
                     startY = shape.getStartingPoints()[1] + (moveY);
@@ -102,6 +104,25 @@ public class Controller {
                     drawShape(shape.getType());
                 });
                 return;
+            } else if (resizeByMove.isSelected()) {
+                System.out.println(marked);
+                tempShape.ifPresent(shape -> {
+                    if ("START".equals(marked)) {
+                        startX = shape.getStartingPoints()[0] + (moveX);
+                        startY = shape.getStartingPoints()[1] + (moveY);
+                        endX = shape.getEndPoints()[0];
+                        endY = shape.getEndPoints()[1];
+                    } else if ("END".equals(marked)) {
+                        startX = shape.getStartingPoints()[0];
+                        startY = shape.getStartingPoints()[1];
+                        endX = shape.getEndPoints()[0] + moveX;
+                        endY = shape.getEndPoints()[1] + moveY;
+
+                    }
+                    Main.getInstance().getShapes().remove(shape);
+                    shape.remove();
+                    drawShape(shape.getType());
+                });
             }
 
             drawSelectedShape();
@@ -184,10 +205,13 @@ public class Controller {
 class ShapeSelector {
     static Shape getSelectedShape(double x, double y) {
         for (Shape s : Main.getInstance().getShapes()) {
-            if (isInRange(x, s.getStartingPoints()[0], y, s.getStartingPoints()[1]))
+            if (isInRange(x, s.getStartingPoints()[0], y, s.getStartingPoints()[1])) {
+                Controller.marked = "START";
                 return s;
-            if (isInRange(x, s.getEndPoints()[0], y, s.getEndPoints()[1]))
+            } else if (isInRange(x, s.getEndPoints()[0], y, s.getEndPoints()[1])) {
+                Controller.marked = "END";
                 return s;
+            }
         }
         return null;
     }
