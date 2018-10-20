@@ -3,7 +3,10 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import sample.shapes.Circle;
@@ -11,7 +14,6 @@ import sample.shapes.Line;
 import sample.shapes.Rectangle;
 import sample.shapes.Shape;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class Controller {
@@ -39,7 +41,7 @@ public class Controller {
     private TextField labelStartX, labelStartY, labelEndX, labelEndY;
 
     @FXML
-    private ToggleButton move;
+    private ToggleButton move, resize;
 
     private Optional<Shape> tempShape;
     private static Controller instance;
@@ -65,8 +67,17 @@ public class Controller {
             startX = event.getX();
             startY = event.getY();
 
-            if (move.isSelected()) {
+            if (move.isSelected() || resize.isSelected()) {
                 tempShape = Optional.ofNullable(ShapeSelector.getSelectedShape(event.getX(), event.getY()));
+
+                if (resize.isSelected()) {
+                    tempShape.ifPresent(shape -> {
+                        labelStartX.setText(String.valueOf(shape.getStartingPoints()[0]));
+                        labelStartY.setText(String.valueOf(shape.getStartingPoints()[1]));
+                        labelEndX.setText(String.valueOf(shape.getEndPoints()[0]));
+                        labelEndY.setText(String.valueOf(shape.getEndPoints()[1]));
+                    });
+                }
             }
 
         });
@@ -93,7 +104,6 @@ public class Controller {
                 return;
             }
 
-
             drawSelectedShape();
         });
     }
@@ -101,9 +111,15 @@ public class Controller {
     @FXML
     private void draw() {
         startX = Double.parseDouble(Optional.of(labelStartX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        startX = Double.parseDouble(Optional.of(labelStartY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        startX = Double.parseDouble(Optional.of(labelEndX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        startX = Double.parseDouble(Optional.of(labelEndY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        startY = Double.parseDouble(Optional.of(labelStartY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        endX = Double.parseDouble(Optional.of(labelEndX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        endY = Double.parseDouble(Optional.of(labelEndY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+
+        tempShape.ifPresent(shape -> {
+            Main.getInstance().getShapes().remove(shape);
+            shape.remove();
+            drawShape(shape.getType());
+        });
 
         drawSelectedShape();
         clearLabels();
