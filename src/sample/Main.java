@@ -28,7 +28,7 @@ public class Main extends Application {
         launch(args);
     }
 
-    public static void setInstance(Main instance) {
+    private static void setInstance(Main instance) {
         Main.instance = instance;
     }
 

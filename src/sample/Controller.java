@@ -11,6 +11,8 @@ import sample.shapes.Line;
 import sample.shapes.Rectangle;
 import sample.shapes.Shape;
 
+import java.util.Optional;
+
 public class Controller {
 
     private double startX;
@@ -21,7 +23,7 @@ public class Controller {
     private double mainHeight = 629;
 
     @FXML
-    private Canvas canvas;
+    private Canvas mainCanvas;
 
     @FXML
     private ToggleGroup toggleGroup;
@@ -32,16 +34,13 @@ public class Controller {
     @FXML
     private Label coordinates;
 
-    private GraphicsContext gc;
+    @FXML
+    private Button drawButton;
+
+    @FXML
+    private TextField labelStartX, labelStartY, labelEndX, labelEndY;
+
     private static Controller instance;
-
-    public static Controller getInstance() {
-        return instance;
-    }
-
-    public static void setInstance(Controller instance) {
-        Controller.instance = instance;
-    }
 
     @FXML
     public void initialize() {
@@ -51,12 +50,12 @@ public class Controller {
         canvasHolder.setMaxWidth(mainWidth);
 
 
-        gc = canvas.getGraphicsContext2D();
+        GraphicsContext gc = mainCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, this.canvas.getWidth(), this.canvas.getHeight());
+        gc.fillRect(0, 0, this.mainCanvas.getWidth(), this.mainCanvas.getHeight());
 
-        canvas.setHeight(mainHeight);
-        canvas.setWidth(mainWidth);
+        mainCanvas.setHeight(mainHeight);
+        mainCanvas.setWidth(mainWidth);
 
         canvasHolder.setOnMouseMoved(event -> coordinates.setText("X: " + event.getX() + "Y: " + event.getY()));
 
@@ -70,30 +69,59 @@ public class Controller {
         canvasHolder.setOnMouseReleased(event -> {
             endX = event.getX();
             endY = event.getY();
-            ToggleButton selectedToggle = (ToggleButton) toggleGroup.getSelectedToggle();
 
-            if (selectedToggle != null) {
-                String text = selectedToggle.getText();
-
-                switch (text) {
-                    case "Linia":
-                        new Line(new double[]{startX, startY}, new double[]{endX, endY})
-                                .draw();
-                        break;
-
-                    case "Prostokąt":
-                        new Rectangle(new double[]{startX, startY}, new double[]{endX, endY})
-                                .draw();
-                        break;
-
-                    case "Okrąg":
-                        new Circle(new double[]{startX, startY}, new double[]{endX, endY})
-                                .draw();
-                        break;
-                }
-            }
-
+            drawSelectedShape();
         });
+    }
+
+    @FXML
+    private void draw() {
+        startX = Double.parseDouble(Optional.of(labelStartX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        startX = Double.parseDouble(Optional.of(labelStartY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        startX = Double.parseDouble(Optional.of(labelEndX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        startX = Double.parseDouble(Optional.of(labelEndY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+
+        drawSelectedShape();
+        clearLabels();
+    }
+
+    private void clearLabels() {
+        labelStartX.clear();
+        labelStartY.clear();
+        labelEndX.clear();
+        labelEndY.clear();
+    }
+
+    private void drawSelectedShape() {
+        ToggleButton selectedToggle = (ToggleButton) toggleGroup.getSelectedToggle();
+        if (selectedToggle != null) {
+            String text = selectedToggle.getText();
+
+            switch (text) {
+                case "Linia":
+                    new Line(new double[]{startX, startY}, new double[]{endX, endY})
+                            .draw();
+                    break;
+
+                case "Prostokąt":
+                    new Rectangle(new double[]{startX, startY}, new double[]{endX, endY})
+                            .draw();
+                    break;
+
+                case "Okrąg":
+                    new Circle(new double[]{startX, startY}, new double[]{endX, endY})
+                            .draw();
+                    break;
+            }
+        }
+    }
+
+    public static Controller getInstance() {
+        return instance;
+    }
+
+    private static void setInstance(Controller instance) {
+        Controller.instance = instance;
     }
 
     public StackPane getCanvasHolder() {
