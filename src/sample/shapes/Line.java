@@ -12,8 +12,8 @@ public class Line extends AbstractShape{
     }
 
     @Override
-    public String getType() {
-        return "Linia";
+    public ShapeType getType() {
+        return ShapeType.LINE;
     }
 
     @Override

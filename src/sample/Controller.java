@@ -9,10 +9,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import sample.shapes.Circle;
-import sample.shapes.Line;
-import sample.shapes.Rectangle;
-import sample.shapes.Shape;
+import sample.shapes.*;
+import sample.shapes.util.ShapeSelector;
 
 import java.util.Optional;
 
@@ -24,15 +22,15 @@ public class Controller {
     private double endY;
     private double mainWidth = 1195;
     private double mainHeight = 629;
-    private Optional<Shape> tempShape;
+    private Optional<Shape> tempShape = Optional.empty();
     private static Controller instance;
-    public static String marked;
+    public Position position;
 
     @FXML
     private Canvas mainCanvas;
 
     @FXML
-    private ToggleGroup toggleGroup;
+    private ToggleGroup shapesGroup;
 
     @FXML
     private StackPane canvasHolder;
@@ -81,48 +79,46 @@ public class Controller {
                     });
                 }
             }
-
         });
 
         canvasHolder.setOnMouseReleased(event -> {
             endX = event.getX();
             endY = event.getY();
-            double moveX = endX -startX;
-            double moveY = endY - startY;
+            double translateX = endX -startX;
+            double translateY = endY - startY;
 
             if (move.isSelected()) {
                 tempShape.ifPresent(shape -> {
-
-                    startX = shape.getStartingPoints()[0] + (moveX);
-                    startY = shape.getStartingPoints()[1] + (moveY);
-                    endX = shape.getEndPoints()[0] + moveX;
-                    endY = shape.getEndPoints()[1] + moveY;
+                    startX = shape.getStartingPoints()[0] + (translateX);
+                    startY = shape.getStartingPoints()[1] + (translateY);
+                    endX = shape.getEndPoints()[0] + translateX;
+                    endY = shape.getEndPoints()[1] + translateY;
 
                     Main.getInstance().getShapes().remove(shape);
                     shape.remove();
-
                     drawShape(shape.getType());
                 });
                 return;
             } else if (resizeByMove.isSelected()) {
-                System.out.println(marked);
                 tempShape.ifPresent(shape -> {
-                    if ("START".equals(marked)) {
-                        startX = shape.getStartingPoints()[0] + (moveX);
-                        startY = shape.getStartingPoints()[1] + (moveY);
+                    if (Position.START.equals(position)) {
+                        startX = shape.getStartingPoints()[0] + (translateX);
+                        startY = shape.getStartingPoints()[1] + (translateY);
                         endX = shape.getEndPoints()[0];
                         endY = shape.getEndPoints()[1];
-                    } else if ("END".equals(marked)) {
+                    } else if (Position.END.equals(position)) {
                         startX = shape.getStartingPoints()[0];
                         startY = shape.getStartingPoints()[1];
-                        endX = shape.getEndPoints()[0] + moveX;
-                        endY = shape.getEndPoints()[1] + moveY;
-
+                        endX = shape.getEndPoints()[0] + translateX;
+                        endY = shape.getEndPoints()[1] + translateY;
                     }
                     Main.getInstance().getShapes().remove(shape);
                     shape.remove();
                     drawShape(shape.getType());
                 });
+                return;
+            } else if (resize.isSelected()) {
+                return;
             }
 
             drawSelectedShape();
@@ -131,19 +127,29 @@ public class Controller {
 
     @FXML
     private void draw() {
-        startX = Double.parseDouble(Optional.of(labelStartX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        startY = Double.parseDouble(Optional.of(labelStartY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        endX = Double.parseDouble(Optional.of(labelEndX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
-        endY = Double.parseDouble(Optional.of(labelEndY.getText()).filter(s -> !s.isEmpty()).orElse("0"));
+        startX = parseInputToDouble(labelStartX);
+        startY = parseInputToDouble(labelStartY);
+        endX = parseInputToDouble(labelEndX);
+        endY = parseInputToDouble(labelEndY);
 
-        tempShape.ifPresent(shape -> {
-            Main.getInstance().getShapes().remove(shape);
-            shape.remove();
-            drawShape(shape.getType());
-        });
+        try {
+            if (resize.isSelected()) {
+                tempShape.ifPresent(shape -> {
+                    Main.getInstance().getShapes().remove(shape);
+                    shape.remove();
+                    drawShape(shape.getType());
+                });
+                return;
+            }
 
-        drawSelectedShape();
-        clearLabels();
+            drawSelectedShape();
+        } finally {
+            clearLabels();
+        }
+    }
+
+    private double parseInputToDouble(TextField labelStartX) {
+        return Double.parseDouble(Optional.of(labelStartX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
     }
 
     private void clearLabels() {
@@ -154,26 +160,27 @@ public class Controller {
     }
 
     private void drawSelectedShape() {
-        ToggleButton selectedToggle = (ToggleButton) toggleGroup.getSelectedToggle();
+        ToggleButton selectedToggle = (ToggleButton) shapesGroup.getSelectedToggle();
         if (selectedToggle != null) {
-            String text = selectedToggle.getText();
-            drawShape(text);
+            String type = selectedToggle.getText();
+            ShapeType shapeType = ShapeType.getShapeType(type);
+            drawShape(shapeType);
         }
     }
 
-    private void drawShape(String text) {
-        switch (text) {
-            case "Linia":
+    private void drawShape(ShapeType type) {
+        switch (type) {
+            case LINE:
                 new Line(new double[]{startX, startY}, new double[]{endX, endY})
                         .draw();
                 break;
 
-            case "Prostokąt":
+            case RECTANGLE:
                 new Rectangle(new double[]{startX, startY}, new double[]{endX, endY})
                         .draw();
                 break;
 
-            case "Okrąg":
+            case CIRCLE:
                 new Circle(new double[]{startX, startY}, new double[]{endX, endY})
                         .draw();
                 break;
@@ -200,23 +207,4 @@ public class Controller {
         return mainHeight;
     }
 
-}
-
-class ShapeSelector {
-    static Shape getSelectedShape(double x, double y) {
-        for (Shape s : Main.getInstance().getShapes()) {
-            if (isInRange(x, s.getStartingPoints()[0], y, s.getStartingPoints()[1])) {
-                Controller.marked = "START";
-                return s;
-            } else if (isInRange(x, s.getEndPoints()[0], y, s.getEndPoints()[1])) {
-                Controller.marked = "END";
-                return s;
-            }
-        }
-        return null;
-    }
-
-    private static boolean isInRange(double x1, double x2, double y1, double y2) {
-        return Math.abs(x1 - x2) < 15 && Math.abs(y1 - y2) < 15;
-    }
 }

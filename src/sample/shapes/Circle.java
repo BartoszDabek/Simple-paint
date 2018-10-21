@@ -12,8 +12,8 @@ public class Circle extends AbstractShape {
 
 
     @Override
-    public String getType() {
-        return "Okrąg";
+    public ShapeType getType() {
+        return ShapeType.CIRCLE;
     }
 
     @Override

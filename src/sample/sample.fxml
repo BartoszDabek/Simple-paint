@@ -67,11 +67,11 @@
                <children>
                   <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="134.0" text="Prostokąt" GridPane.rowIndex="1">
                      <toggleGroup>
-                        <ToggleGroup fx:id="toggleGroup" />
+                        <ToggleGroup fx:id="shapesGroup" />
                      </toggleGroup>
                   </ToggleButton>
-                  <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="108.0" text="Linia" toggleGroup="$toggleGroup" GridPane.rowIndex="2" />
-                  <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Okrąg" toggleGroup="$toggleGroup" GridPane.rowIndex="3" />
+                  <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="108.0" text="Linia" toggleGroup="$shapesGroup" GridPane.rowIndex="2" />
+                  <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="110.0" text="Okrąg" toggleGroup="$shapesGroup" GridPane.rowIndex="3" />
                   <HBox GridPane.rowIndex="5">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="StartX:" />
@@ -115,9 +115,9 @@
                   <Separator prefWidth="200.0" GridPane.rowIndex="4" />
                   <Button mnemonicParsing="false" onAction="#draw" prefHeight="25.0" prefWidth="129.0" text="Rysuj" GridPane.rowIndex="9" />
                   <Separator prefWidth="200.0" GridPane.rowIndex="10" />
-                  <ToggleButton fx:id="move" mnemonicParsing="false" prefWidth="140.0" text="Przesuń" toggleGroup="$toggleGroup" GridPane.rowIndex="11" />
-                  <ToggleButton fx:id="resize" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Resize Inputs" toggleGroup="$toggleGroup" GridPane.rowIndex="12" />
-                  <ToggleButton fx:id="resizeByMove" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Resize Move" toggleGroup="$toggleGroup" GridPane.rowIndex="13" />
+                  <ToggleButton fx:id="move" mnemonicParsing="false" prefWidth="140.0" text="Przesuń" toggleGroup="$shapesGroup" GridPane.rowIndex="11" />
+                  <ToggleButton fx:id="resize" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Resize Inputs" toggleGroup="$shapesGroup" GridPane.rowIndex="12" />
+                  <ToggleButton fx:id="resizeByMove" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Resize Move" toggleGroup="$shapesGroup" GridPane.rowIndex="13" />
                </children>
                <VBox.margin>
                   <Insets />

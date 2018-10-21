@@ -12,8 +12,8 @@ public class Rectangle extends AbstractShape {
     }
 
     @Override
-    public String getType() {
-        return "Prostokąt";
+    public ShapeType getType() {
+        return ShapeType.RECTANGLE;
     }
 
     @Override
