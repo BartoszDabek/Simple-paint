@@ -3,10 +3,7 @@ package sample;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import sample.shapes.*;
@@ -28,29 +25,28 @@ public class Controller {
 
     @FXML
     private Canvas mainCanvas;
-
     @FXML
     private ToggleGroup shapesGroup;
-
     @FXML
     private StackPane canvasHolder;
-
     @FXML
     private Label coordinates;
-
     @FXML
-    private TextField labelStartX, labelStartY, labelEndX, labelEndY;
-
+    private TextField labelStartX, labelStartY, labelEndX, labelEndY, rLabel, gLabel, bLabel;
     @FXML
     private ToggleButton move, resize, resizeByMove;
+    @FXML
+    private Slider rRGB, gRGB, bRGB, sliderC, sliderM, sliderY, sliderK;
+    @FXML
+    private javafx.scene.shape.Rectangle rgbColor;
+    @FXML
+    private TextField cCMYK, mCMYK, yCMYK, kCMYK;
 
     @FXML
     public void initialize() {
         setInstance(this);
-
         canvasHolder.setMaxHeight(mainHeight);
         canvasHolder.setMaxWidth(mainWidth);
-
 
         GraphicsContext gc = mainCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
@@ -58,6 +54,9 @@ public class Controller {
 
         mainCanvas.setHeight(mainHeight);
         mainCanvas.setWidth(mainWidth);
+
+        initializeRGB();
+        initializeCMYK();
 
         canvasHolder.setOnMouseMoved(event -> {
             coordinates.setText("X: " + event.getX() + "  Y: " + event.getY());
@@ -123,6 +122,116 @@ public class Controller {
 
             drawSelectedShape();
         });
+    }
+
+    private void initializeRGB() {
+        rLabel.setText("0");
+        gLabel.setText("0");
+        bLabel.setText("0");
+
+        rgbColor.setFill(new Color(0, 0, 0, 1));
+        bindRGBSliderToInput(rRGB, rLabel);
+        bindRGBSliderToInput(gRGB, gLabel);
+        bindRGBSliderToInput(bRGB, bLabel);
+        rLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+            rRGB.setValue(Double.valueOf(newValue));
+            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
+        });
+        gLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+            gRGB.setValue(Double.valueOf(newValue));
+            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
+        });
+        bLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+            bRGB.setValue(Double.valueOf(newValue));
+            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
+        });
+    }
+
+    private void initializeCMYK() {
+        cCMYK.setText("0");
+        mCMYK.setText("0");
+        yCMYK.setText("0");
+        kCMYK.setText("0");
+
+        bindCMYKSliderToInput(sliderC, cCMYK);
+        bindCMYKSliderToInput(sliderM, mCMYK);
+        bindCMYKSliderToInput(sliderY, yCMYK);
+        bindCMYKSliderToInput(sliderK, kCMYK);
+
+        cCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
+            sliderC.setValue(Double.valueOf(newValue));
+        });
+
+        mCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
+            sliderM.setValue(Double.valueOf(newValue));
+        });
+
+        yCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
+            sliderY.setValue(Double.valueOf(newValue));
+        });
+
+        kCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
+            sliderK.setValue(Double.valueOf(newValue));
+        });
+    }
+
+    private void bindRGBSliderToInput(Slider slider, TextField textField) {
+        slider.valueProperty().addListener((obs, oldval, newVal) ->
+                textField.setText(String.valueOf(newVal.intValue())));
+    }
+
+    private void bindCMYKSliderToInput(Slider slider, TextField textField) {
+        slider.valueProperty().addListener((obs, oldval, newVal) ->
+                textField.setText(String.format("%.2f", newVal)));
+    }
+
+    @FXML
+    private void rgb2cmyk() {
+        double computedC, computedM, computedY, computedK;
+
+        computedC = 1 - ((double) Integer.valueOf(rLabel.getText())/255);
+        computedM = 1 - ((double) Integer.valueOf(gLabel.getText())/255);
+        computedY = 1 - ((double) Integer.valueOf(bLabel.getText())/255);
+
+        var minCMY = Math.min(computedC,
+                Math.min(computedM,computedY));
+        computedC = (computedC - minCMY) / (1 - minCMY) ;
+        computedM = (computedM - minCMY) / (1 - minCMY) ;
+        computedY = (computedY - minCMY) / (1 - minCMY) ;
+        computedK = minCMY;
+
+        computedC *= 100;
+        computedM *= 100;
+        computedY *= 100;
+        computedK *= 100;
+
+        cCMYK.setText(String.format("%.2f", computedC));
+        mCMYK.setText(String.format("%.2f", computedM));
+        yCMYK.setText(String.format("%.2f", computedY));
+        kCMYK.setText(String.format("%.2f", computedK));
+    }
+
+    @FXML
+    private void cmyk2rgb() {
+        int r, g, b;
+
+        float cyan = Float.valueOf(cCMYK.getText()) / 100;
+        float magneta = Float.valueOf(mCMYK.getText()) / 100;
+        float yellow = Float.valueOf(yCMYK.getText()) / 100;
+        float black = Float.valueOf(kCMYK.getText()) / 100;
+
+        double computedRed = 1 - Math.min(1,(double) cyan * (1 - black) + black);
+        r = (int) Math.round(computedRed * 255);
+
+        double computedGreen = 1 - Math.min(1,(double) magneta * (1 - black) + black);
+        g = (int) Math.round(computedGreen * 255);
+
+        double computedBlue = 1 - Math.min(1,(double) yellow * (1 - black) + black);
+        b = (int) Math.round(computedBlue * 255);
+
+        rLabel.setText(String.valueOf(r));
+        gLabel.setText(String.valueOf(g));
+        bLabel.setText(String.valueOf(b));
     }
 
     @FXML
