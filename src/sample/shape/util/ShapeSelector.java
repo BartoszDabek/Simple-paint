@@ -1,9 +1,9 @@
-package sample.shapes.util;
+package sample.shape.util;
 
 import sample.Controller;
 import sample.Main;
-import sample.shapes.Position;
-import sample.shapes.Shape;
+import sample.shape.Position;
+import sample.shape.Shape;
 
 public class ShapeSelector {
     public static Shape getSelectedShape(double x, double y) {

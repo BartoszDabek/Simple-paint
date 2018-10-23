@@ -1,4 +1,4 @@
-package sample.shapes;
+package sample.shape;
 
 public enum ShapeType {
     RECTANGLE("Prostokąt"),

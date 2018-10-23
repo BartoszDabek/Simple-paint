@@ -1,4 +1,4 @@
-package sample.shapes;
+package sample.shape;
 
 import sample.Controller;
 

@@ -6,8 +6,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import sample.shapes.*;
-import sample.shapes.util.ShapeSelector;
+import sample.color.CMYK;
+import sample.color.RGB;
+import sample.shape.*;
+import sample.shape.util.ShapeSelector;
 
 import java.util.Optional;
 
@@ -32,15 +34,15 @@ public class Controller {
     @FXML
     private Label coordinates;
     @FXML
-    private TextField labelStartX, labelStartY, labelEndX, labelEndY, rLabel, gLabel, bLabel;
+    private TextField labelStartX, labelStartY, labelEndX, labelEndY, rRGBLabel, gRGBLabel, bRGBLabel;
     @FXML
     private ToggleButton move, resize, resizeByMove;
     @FXML
-    private Slider rRGB, gRGB, bRGB, sliderC, sliderM, sliderY, sliderK;
+    private Slider rRGBSlider, gRGBSlider, bRGBSlider, cCMYKSlider, mCMYKSlider, yCMYKSlider, kCMYKSlider;
     @FXML
-    private javafx.scene.shape.Rectangle rgbColor;
+    private javafx.scene.shape.Rectangle colorDisplay;
     @FXML
-    private TextField cCMYK, mCMYK, yCMYK, kCMYK;
+    private TextField cCMYKLabel, mCMYKLabel, yCMYKLabel, kCMYKLabel;
 
     @FXML
     public void initialize() {
@@ -54,7 +56,7 @@ public class Controller {
 
         mainCanvas.setHeight(mainHeight);
         mainCanvas.setWidth(mainWidth);
-
+        colorDisplay.setFill(new Color(0, 0, 0, 1));
         initializeRGB();
         initializeCMYK();
 
@@ -125,113 +127,35 @@ public class Controller {
     }
 
     private void initializeRGB() {
-        rLabel.setText("0");
-        gLabel.setText("0");
-        bLabel.setText("0");
-
-        rgbColor.setFill(new Color(0, 0, 0, 1));
-        bindRGBSliderToInput(rRGB, rLabel);
-        bindRGBSliderToInput(gRGB, gLabel);
-        bindRGBSliderToInput(bRGB, bLabel);
-        rLabel.textProperty().addListener((observable, oldValue, newValue) -> {
-            rRGB.setValue(Double.valueOf(newValue));
-            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
-        });
-        gLabel.textProperty().addListener((observable, oldValue, newValue) -> {
-            gRGB.setValue(Double.valueOf(newValue));
-            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
-        });
-        bLabel.textProperty().addListener((observable, oldValue, newValue) -> {
-            bRGB.setValue(Double.valueOf(newValue));
-            rgbColor.setFill(Color.rgb(Integer.valueOf(rLabel.getText()), Integer.valueOf(gLabel.getText()), Integer.valueOf(bLabel.getText())));
-        });
+        RGB.bind(colorDisplay, rRGBLabel, gRGBLabel, bRGBLabel, rRGBSlider, gRGBSlider, bRGBSlider);
     }
 
     private void initializeCMYK() {
-        cCMYK.setText("0");
-        mCMYK.setText("0");
-        yCMYK.setText("0");
-        kCMYK.setText("0");
-
-        bindCMYKSliderToInput(sliderC, cCMYK);
-        bindCMYKSliderToInput(sliderM, mCMYK);
-        bindCMYKSliderToInput(sliderY, yCMYK);
-        bindCMYKSliderToInput(sliderK, kCMYK);
-
-        cCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
-            sliderC.setValue(Double.valueOf(newValue));
-        });
-
-        mCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
-            sliderM.setValue(Double.valueOf(newValue));
-        });
-
-        yCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
-            sliderY.setValue(Double.valueOf(newValue));
-        });
-
-        kCMYK.textProperty().addListener((observable, oldValue, newValue) -> {
-            sliderK.setValue(Double.valueOf(newValue));
-        });
-    }
-
-    private void bindRGBSliderToInput(Slider slider, TextField textField) {
-        slider.valueProperty().addListener((obs, oldval, newVal) ->
-                textField.setText(String.valueOf(newVal.intValue())));
-    }
-
-    private void bindCMYKSliderToInput(Slider slider, TextField textField) {
-        slider.valueProperty().addListener((obs, oldval, newVal) ->
-                textField.setText(String.format("%.2f", newVal)));
+        CMYK.bind(cCMYKLabel, mCMYKLabel, yCMYKLabel, kCMYKLabel, cCMYKSlider, mCMYKSlider, yCMYKSlider, kCMYKSlider);
     }
 
     @FXML
     private void rgb2cmyk() {
-        double computedC, computedM, computedY, computedK;
+        double[] cmyk = RGB.toCMYK(Integer.valueOf(rRGBLabel.getText()),
+                                    Integer.valueOf(gRGBLabel.getText()),
+                                    Integer.valueOf(bRGBLabel.getText()));
 
-        computedC = 1 - ((double) Integer.valueOf(rLabel.getText())/255);
-        computedM = 1 - ((double) Integer.valueOf(gLabel.getText())/255);
-        computedY = 1 - ((double) Integer.valueOf(bLabel.getText())/255);
-
-        var minCMY = Math.min(computedC,
-                Math.min(computedM,computedY));
-        computedC = (computedC - minCMY) / (1 - minCMY) ;
-        computedM = (computedM - minCMY) / (1 - minCMY) ;
-        computedY = (computedY - minCMY) / (1 - minCMY) ;
-        computedK = minCMY;
-
-        computedC *= 100;
-        computedM *= 100;
-        computedY *= 100;
-        computedK *= 100;
-
-        cCMYK.setText(String.format("%.2f", computedC));
-        mCMYK.setText(String.format("%.2f", computedM));
-        yCMYK.setText(String.format("%.2f", computedY));
-        kCMYK.setText(String.format("%.2f", computedK));
+        cCMYKLabel.setText(String.format("%.2f", cmyk[0]));
+        mCMYKLabel.setText(String.format("%.2f", cmyk[1]));
+        yCMYKLabel.setText(String.format("%.2f", cmyk[2]));
+        kCMYKLabel.setText(String.format("%.2f", cmyk[3]));
     }
 
     @FXML
     private void cmyk2rgb() {
-        int r, g, b;
+        int[] rgb = CMYK.toRGB(Float.valueOf(cCMYKLabel.getText()),
+                                Float.valueOf(mCMYKLabel.getText()),
+                                Float.valueOf(yCMYKLabel.getText()),
+                                Float.valueOf(kCMYKLabel.getText()));
 
-        float cyan = Float.valueOf(cCMYK.getText()) / 100;
-        float magneta = Float.valueOf(mCMYK.getText()) / 100;
-        float yellow = Float.valueOf(yCMYK.getText()) / 100;
-        float black = Float.valueOf(kCMYK.getText()) / 100;
-
-        double computedRed = 1 - Math.min(1,(double) cyan * (1 - black) + black);
-        r = (int) Math.round(computedRed * 255);
-
-        double computedGreen = 1 - Math.min(1,(double) magneta * (1 - black) + black);
-        g = (int) Math.round(computedGreen * 255);
-
-        double computedBlue = 1 - Math.min(1,(double) yellow * (1 - black) + black);
-        b = (int) Math.round(computedBlue * 255);
-
-        rLabel.setText(String.valueOf(r));
-        gLabel.setText(String.valueOf(g));
-        bLabel.setText(String.valueOf(b));
+        rRGBLabel.setText(String.valueOf(rgb[0]));
+        gRGBLabel.setText(String.valueOf(rgb[1]));
+        bRGBLabel.setText(String.valueOf(rgb[2]));
     }
 
     @FXML
@@ -261,13 +185,6 @@ public class Controller {
         return Double.parseDouble(Optional.of(labelStartX.getText()).filter(s -> !s.isEmpty()).orElse("0"));
     }
 
-    private void clearLabels() {
-        labelStartX.clear();
-        labelStartY.clear();
-        labelEndX.clear();
-        labelEndY.clear();
-    }
-
     private void drawSelectedShape() {
         ToggleButton selectedToggle = (ToggleButton) shapesGroup.getSelectedToggle();
         if (selectedToggle != null) {
@@ -294,6 +211,13 @@ public class Controller {
                         .draw();
                 break;
         }
+    }
+
+    private void clearLabels() {
+        labelStartX.clear();
+        labelStartY.clear();
+        labelEndX.clear();
+        labelEndY.clear();
     }
 
     public static Controller getInstance() {

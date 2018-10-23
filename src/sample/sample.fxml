@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -122,7 +121,6 @@
                   <ToggleButton fx:id="move" mnemonicParsing="false" prefWidth="140.0" text="Przesuń" toggleGroup="$shapesGroup" GridPane.rowIndex="11" />
                   <ToggleButton fx:id="resize" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Resize Inputs" toggleGroup="$shapesGroup" GridPane.rowIndex="12" />
                   <ToggleButton fx:id="resizeByMove" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Resize Move" toggleGroup="$shapesGroup" GridPane.rowIndex="13" />
-                  <ColorPicker fx:id="color" promptText="Pick a color" GridPane.rowIndex="14" />
                </children>
                <VBox.margin>
                   <Insets />
@@ -168,11 +166,10 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Slider fx:id="rRGB" max="255.0" GridPane.columnIndex="1" />
                   <HBox>
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="Red:" />
-                        <TextField fx:id="rLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="rRGBLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
@@ -182,12 +179,11 @@
                         <Insets right="5.0" />
                      </GridPane.margin>
                   </HBox>
-                  <Slider fx:id="gRGB" max="255.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Slider fx:id="bRGB" max="255.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Slider fx:id="rRGBSlider" max="255.0" GridPane.columnIndex="1" />
                   <HBox GridPane.rowIndex="1">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="Green:" />
-                        <TextField fx:id="gLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="gRGBLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
@@ -197,10 +193,11 @@
                         <Insets right="5.0" />
                      </GridPane.margin>
                   </HBox>
+                  <Slider fx:id="gRGBSlider" max="255.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <HBox GridPane.rowIndex="2">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="Blue:" />
-                        <TextField fx:id="bLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="bRGBLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
@@ -210,53 +207,54 @@
                         <Insets right="5.0" />
                      </GridPane.margin>
                   </HBox>
-                  <Rectangle fx:id="rgbColor" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="34.0" stroke="BLACK" strokeType="INSIDE" width="45.0" GridPane.rowIndex="3" />
+                  <Slider fx:id="bRGBSlider" max="255.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Rectangle fx:id="colorDisplay" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="34.0" stroke="BLACK" strokeType="INSIDE" width="45.0" GridPane.rowIndex="3" />
                   <Button mnemonicParsing="false" onAction="#rgb2cmyk" prefHeight="25.0" prefWidth="129.0" text="rgb2cmyk" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <HBox GridPane.rowIndex="4">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="C:" />
-                        <TextField fx:id="cCMYK" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="cCMYKLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
                   </HBox>
+                  <Slider fx:id="cCMYKSlider" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <HBox GridPane.rowIndex="5">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="M:" />
-                        <TextField fx:id="mCMYK" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="mCMYKLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
                   </HBox>
+                  <Slider fx:id="mCMYKSlider" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <HBox GridPane.rowIndex="6">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="Y:" />
-                        <TextField fx:id="yCMYK" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="yCMYKLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
                   </HBox>
+                  <Slider fx:id="yCMYKSlider" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                   <HBox GridPane.rowIndex="7">
                      <children>
                         <Label alignment="CENTER" prefHeight="63.0" prefWidth="54.0" text="K:" />
-                        <TextField fx:id="kCMYK" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
+                        <TextField fx:id="kCMYKLabel" alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="55.0">
                            <HBox.margin>
                               <Insets bottom="5.0" top="5.0" />
                            </HBox.margin>
                         </TextField>
                      </children>
                   </HBox>
+                  <Slider fx:id="kCMYKSlider" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                   <Button mnemonicParsing="false" onAction="#cmyk2rgb" prefHeight="25.0" prefWidth="129.0" text="cmyk2rgb" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                  <Slider fx:id="sliderC" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Slider fx:id="sliderM" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Slider fx:id="sliderY" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Slider fx:id="sliderK" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                </children>
             </GridPane>
          </children>

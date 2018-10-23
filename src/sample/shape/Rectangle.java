@@ -1,4 +1,4 @@
-package sample.shapes;
+package sample.shape;
 
 import javafx.scene.canvas.GraphicsContext;
 import sample.Controller;
