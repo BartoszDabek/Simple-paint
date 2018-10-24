@@ -9,4 +9,8 @@ public interface Shape {
     void draw();
     ShapeType getType();
     void remove();
+    void setFillColor(Color color);
+    void recreate();
+    void setStartingPoints(double[] startingPoints);
+    void setEndingPoints(double[] endingPoints);
 }

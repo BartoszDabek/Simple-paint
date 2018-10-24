@@ -36,7 +36,7 @@ public class Controller {
     @FXML
     private TextField labelStartX, labelStartY, labelEndX, labelEndY, rRGBLabel, gRGBLabel, bRGBLabel;
     @FXML
-    private ToggleButton move, resize, resizeByMove;
+    private ToggleButton move, resize, resizeByMove, colorButton;
     @FXML
     private Slider rRGBSlider, gRGBSlider, bRGBSlider, cCMYKSlider, mCMYKSlider, yCMYKSlider, kCMYKSlider;
     @FXML
@@ -68,7 +68,7 @@ public class Controller {
             startX = event.getX();
             startY = event.getY();
 
-            if (move.isSelected() || resize.isSelected() || resizeByMove.isSelected()) {
+            if (move.isSelected() || resize.isSelected() || resizeByMove.isSelected() || colorButton.isSelected()) {
                 tempShape = Optional.ofNullable(ShapeSelector.getSelectedShape(event.getX(), event.getY()));
 
                 if (resize.isSelected()) {
@@ -77,6 +77,14 @@ public class Controller {
                         labelStartY.setText(String.valueOf(shape.getStartingPoints()[1]));
                         labelEndX.setText(String.valueOf(shape.getEndPoints()[0]));
                         labelEndY.setText(String.valueOf(shape.getEndPoints()[1]));
+                    });
+                } else if (colorButton.isSelected()) {
+                    tempShape.ifPresent(shape -> {
+                        int r = (int) rRGBSlider.getValue();
+                        int g = (int) gRGBSlider.getValue();
+                        int b = (int) bRGBSlider.getValue();
+                        shape.setFillColor(Color.rgb(r, g, b));
+                        shape.recreate();
                     });
                 }
             }
@@ -94,10 +102,9 @@ public class Controller {
                     startY = shape.getStartingPoints()[1] + (translateY);
                     endX = shape.getEndPoints()[0] + translateX;
                     endY = shape.getEndPoints()[1] + translateY;
-
-                    Main.getInstance().getShapes().remove(shape);
-                    shape.remove();
-                    drawShape(shape.getType());
+                    shape.setStartingPoints(new double[] { startX, startY });
+                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.recreate();
                 });
                 return;
             } else if (resizeByMove.isSelected()) {
@@ -113,12 +120,12 @@ public class Controller {
                         endX = shape.getEndPoints()[0] + translateX;
                         endY = shape.getEndPoints()[1] + translateY;
                     }
-                    Main.getInstance().getShapes().remove(shape);
-                    shape.remove();
-                    drawShape(shape.getType());
+                    shape.setStartingPoints(new double[] { startX, startY });
+                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.recreate();
                 });
                 return;
-            } else if (resize.isSelected()) {
+            } else if (resize.isSelected() || colorButton.isSelected()) {
                 return;
             }
 
@@ -168,9 +175,9 @@ public class Controller {
         try {
             if (resize.isSelected()) {
                 tempShape.ifPresent(shape -> {
-                    Main.getInstance().getShapes().remove(shape);
-                    shape.remove();
-                    drawShape(shape.getType());
+                    shape.setStartingPoints(new double[] { startX, startY });
+                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.recreate();
                 });
                 return;
             }

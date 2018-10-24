@@ -10,7 +10,6 @@ public class Circle extends AbstractShape {
         setEndPoints(endPoint);
     }
 
-
     @Override
     public ShapeType getType() {
         return ShapeType.CIRCLE;
@@ -20,7 +19,7 @@ public class Circle extends AbstractShape {
     public void draw() {
         getLayer().getGraphicsContext2D().setFill(getFillColor());
         fixDimensions();
-//        getLayer().getGraphicsContext2D().fillOval(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[0] - getStartingPoints()[0]));
+        getLayer().getGraphicsContext2D().fillOval(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[0] - getStartingPoints()[0]));
         getLayer().getGraphicsContext2D().strokeOval(getStartingPoints()[0], getStartingPoints()[1], Math.abs(getEndPoints()[0] - getStartingPoints()[0]), Math.abs(getEndPoints()[0] - getStartingPoints()[0]));
         Controller.getInstance().getCanvasHolder().getChildren().add(getLayer());
     }

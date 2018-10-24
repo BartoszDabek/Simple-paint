@@ -121,6 +121,7 @@
                   <ToggleButton fx:id="move" mnemonicParsing="false" prefWidth="140.0" text="Przesuń" toggleGroup="$shapesGroup" GridPane.rowIndex="11" />
                   <ToggleButton fx:id="resize" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Resize Inputs" toggleGroup="$shapesGroup" GridPane.rowIndex="12" />
                   <ToggleButton fx:id="resizeByMove" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Resize Move" toggleGroup="$shapesGroup" GridPane.rowIndex="13" />
+                  <ToggleButton fx:id="colorButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="127.0" text="Kolor" toggleGroup="$shapesGroup" GridPane.rowIndex="14" />
                </children>
                <VBox.margin>
                   <Insets />

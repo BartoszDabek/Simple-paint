@@ -27,6 +27,20 @@ abstract class AbstractShape implements Shape{
     }
 
     @Override
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
+    }
+
+    @Override
+    public void recreate() {
+        Main.getInstance().getShapes().remove(this);
+        remove();
+        getLayer().getGraphicsContext2D().clearRect(0, 0, getLayer().getWidth(), getLayer().getHeight());
+        Main.getInstance().getShapes().push(this);
+        draw();
+    }
+
+    @Override
     public double[] getStartingPoints() {
         return startPoints;
     }
@@ -41,10 +55,15 @@ abstract class AbstractShape implements Shape{
         Controller.getInstance().getCanvasHolder().getChildren().remove(getLayer());
     }
 
-    void setStartingPoints(double[] startPoints) {
+    @Override
+    public void setStartingPoints(double[] startPoints) {
         this.startPoints = startPoints;
     }
 
+    @Override
+    public void setEndingPoints(double[] endingPoints) {
+        this.endPoints = endingPoints;
+    }
 
     void setEndPoints(double[] endPoints) {
         this.endPoints = endPoints;
