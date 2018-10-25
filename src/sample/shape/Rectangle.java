@@ -8,7 +8,7 @@ public class Rectangle extends AbstractShape {
     public Rectangle(double[] startPoint, double[] endPoints) {
         super();
         setStartingPoints(startPoint);
-        setEndPoints(endPoints);
+        setEndingPoints(endPoints);
     }
 
     @Override

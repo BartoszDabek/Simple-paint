@@ -64,6 +64,33 @@ public class Controller {
             coordinates.setText("X: " + event.getX() + "  Y: " + event.getY());
         });
 
+        canvasHolder.setOnMouseDragged(event -> {
+            double translateX = event.getX() - startX;
+            double translateY = event.getY() - startY;
+            if (move.isSelected()) {
+                tempShape.ifPresent(shape -> {
+                    if (Position.START.equals(position)) {
+                        startX = shape.getStartingPoints()[0] + translateX;
+                        startY = shape.getStartingPoints()[1] + translateY;
+                        endX = shape.getEndPoints()[0] + translateX;
+                        endY = shape.getEndPoints()[1] + translateY;
+                    } else if (Position.END.equals(position)) {
+                        if (shape instanceof Line) {
+                            Line line = (Line) shape;
+                            line.fixDimensions();
+                        }
+                        startX = shape.getEndPoints()[0] + translateX;
+                        startY = shape.getEndPoints()[1] + translateY;
+                        endX = shape.getStartingPoints()[0] + translateX;
+                        endY = shape.getStartingPoints()[1] + translateY;
+                    }
+                    shape.setStartingPoints(new double[] { startX, startY });
+                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.recreate();
+                });
+            }
+        });
+
         canvasHolder.setOnMousePressed(event -> {
             startX = event.getX();
             startY = event.getY();
@@ -96,18 +123,7 @@ public class Controller {
             double translateX = endX -startX;
             double translateY = endY - startY;
 
-            if (move.isSelected()) {
-                tempShape.ifPresent(shape -> {
-                    startX = shape.getStartingPoints()[0] + (translateX);
-                    startY = shape.getStartingPoints()[1] + (translateY);
-                    endX = shape.getEndPoints()[0] + translateX;
-                    endY = shape.getEndPoints()[1] + translateY;
-                    shape.setStartingPoints(new double[] { startX, startY });
-                    shape.setEndingPoints(new double[] { endX, endY });
-                    shape.recreate();
-                });
-                return;
-            } else if (resizeByMove.isSelected()) {
+            if (resizeByMove.isSelected()) {
                 tempShape.ifPresent(shape -> {
                     if (Position.START.equals(position)) {
                         startX = shape.getStartingPoints()[0] + (translateX);
@@ -125,7 +141,7 @@ public class Controller {
                     shape.recreate();
                 });
                 return;
-            } else if (resize.isSelected() || colorButton.isSelected()) {
+            } else if (resize.isSelected() || colorButton.isSelected() || move.isSelected()) {
                 return;
             }
 

@@ -7,7 +7,7 @@ public class Circle extends AbstractShape {
     public Circle(double[] startPoint, double[] endPoint) {
         super();
         setStartingPoints(startPoint);
-        setEndPoints(endPoint);
+        setEndingPoints(endPoint);
     }
 
     @Override

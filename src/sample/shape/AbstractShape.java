@@ -64,8 +64,4 @@ abstract class AbstractShape implements Shape{
     public void setEndingPoints(double[] endingPoints) {
         this.endPoints = endingPoints;
     }
-
-    void setEndPoints(double[] endPoints) {
-        this.endPoints = endPoints;
-    }
 }
