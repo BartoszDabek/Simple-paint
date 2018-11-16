@@ -68,7 +68,7 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <ToggleButton mnemonicParsing="false" prefHeight="25.0" prefWidth="134.0" text="Prostokąt" GridPane.rowIndex="1">
+                  <ToggleButton fx:id="rectangleShape" mnemonicParsing="false" prefHeight="25.0" prefWidth="134.0" text="Prostokąt" GridPane.rowIndex="1">
                      <toggleGroup>
                         <ToggleGroup fx:id="shapesGroup" />
                      </toggleGroup>
@@ -136,7 +136,7 @@
    <center>
       <StackPane fx:id="canvasHolder" BorderPane.alignment="CENTER">
          <children>
-            <Canvas fx:id="mainCanvas" height="784.0" width="976.0">
+            <Canvas fx:id="mainCanvas" height="600.0" width="1200.0">
                <StackPane.margin>
                   <Insets right="15.0" />
                </StackPane.margin>

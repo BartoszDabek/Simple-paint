@@ -19,8 +19,8 @@ public class Controller {
     private double startY;
     private double endX;
     private double endY;
-    private double mainWidth = 1195;
-    private double mainHeight = 629;
+    private double mainWidth = 1200;
+    private double mainHeight = 600;
     private Optional<Shape> tempShape = Optional.empty();
     private static Controller instance;
     public Position position;
@@ -60,9 +60,7 @@ public class Controller {
         initializeRGB();
         initializeCMYK();
 
-        canvasHolder.setOnMouseMoved(event -> {
-            coordinates.setText("X: " + event.getX() + "  Y: " + event.getY());
-        });
+        canvasHolder.setOnMouseMoved(event -> coordinates.setText("X: " + event.getX() + "  Y: " + event.getY()));
 
         canvasHolder.setOnMouseDragged(event -> {
             double translateX = event.getX() - startX;
@@ -84,8 +82,8 @@ public class Controller {
                         endX = shape.getStartingPoints()[0] + translateX;
                         endY = shape.getStartingPoints()[1] + translateY;
                     }
-                    shape.setStartingPoints(new double[] { startX, startY });
-                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.setStartingPoints(new double[]{startX, startY});
+                    shape.setEndingPoints(new double[]{endX, endY});
                     shape.recreate();
                 });
             }
@@ -120,7 +118,7 @@ public class Controller {
         canvasHolder.setOnMouseReleased(event -> {
             endX = event.getX();
             endY = event.getY();
-            double translateX = endX -startX;
+            double translateX = endX - startX;
             double translateY = endY - startY;
 
             if (resizeByMove.isSelected()) {
@@ -136,8 +134,8 @@ public class Controller {
                         endX = shape.getEndPoints()[0] + translateX;
                         endY = shape.getEndPoints()[1] + translateY;
                     }
-                    shape.setStartingPoints(new double[] { startX, startY });
-                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.setStartingPoints(new double[]{startX, startY});
+                    shape.setEndingPoints(new double[]{endX, endY});
                     shape.recreate();
                 });
                 return;
@@ -160,8 +158,8 @@ public class Controller {
     @FXML
     private void rgb2cmyk() {
         double[] cmyk = RGB.toCMYK(Integer.valueOf(rRGBLabel.getText()),
-                                    Integer.valueOf(gRGBLabel.getText()),
-                                    Integer.valueOf(bRGBLabel.getText()));
+                Integer.valueOf(gRGBLabel.getText()),
+                Integer.valueOf(bRGBLabel.getText()));
 
         cCMYKLabel.setText(String.format("%.2f", cmyk[0]));
         mCMYKLabel.setText(String.format("%.2f", cmyk[1]));
@@ -172,9 +170,9 @@ public class Controller {
     @FXML
     private void cmyk2rgb() {
         int[] rgb = CMYK.toRGB(Float.valueOf(cCMYKLabel.getText()),
-                                Float.valueOf(mCMYKLabel.getText()),
-                                Float.valueOf(yCMYKLabel.getText()),
-                                Float.valueOf(kCMYKLabel.getText()));
+                Float.valueOf(mCMYKLabel.getText()),
+                Float.valueOf(yCMYKLabel.getText()),
+                Float.valueOf(kCMYKLabel.getText()));
 
         rRGBLabel.setText(String.valueOf(rgb[0]));
         gRGBLabel.setText(String.valueOf(rgb[1]));
@@ -191,8 +189,8 @@ public class Controller {
         try {
             if (resize.isSelected()) {
                 tempShape.ifPresent(shape -> {
-                    shape.setStartingPoints(new double[] { startX, startY });
-                    shape.setEndingPoints(new double[] { endX, endY });
+                    shape.setStartingPoints(new double[]{startX, startY});
+                    shape.setEndingPoints(new double[]{endX, endY});
                     shape.recreate();
                 });
                 return;
